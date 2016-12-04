@@ -112,13 +112,32 @@ app.post("/api/events/:id/songs", function (req, res) {
 
 app.put("/api/events/:id/songs/:sid/boost", function (req, res) {
   var eventID = parseInt(req.params.id, 10);
-  var songID = req.params.sid;
-  console.log(eventID);
-  console.log(songID);
+  var songID = parseInt(req.params.sid, 10);
+  var matchedEvent;
 
+  for(var i=0; i<events.length; i++) {
+    if(eventID===events[i].id) {
+      matchedEvent = events[i];
+    }
+  }
+  matchedEvent.boostSong(songID);
+  res.status(200).send();
 });
 
 //GET {{apiUrl}}/api/events/:id/pop
+
+app.get("/api/events/:id/pop", function (req, res) {
+  var eventID = parseInt(req.params.id, 10);
+  var matchedEvent;
+
+  for(var i=0; i<events.length; i++) {
+    if(eventID===events[i].id) {
+      matchedEvent = events[i];
+    }
+  }
+  res.json(matchedEvent.getSongs()[0]);
+  matchedEvent.songs.splice(0,1);
+});
 
 
 app.listen(PORT, function () {
