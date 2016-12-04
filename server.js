@@ -8,7 +8,6 @@ var events = [];
 var eventNextId = 1;
 var personID = 1;
 var songNextID = 1;
-
 app.use(bodyParser.urlencoded());
 
 app.get("/", function (req, res) {
@@ -94,7 +93,6 @@ app.post("/api/events/:id/songs", function (req, res) {
       matchedEvent = events[i];
     }
   }
-
   req.body.name = req.body.name.trim();
   req.body.artist = req.body.artist.trim();
   req.body.id = req.body.id.trim();
@@ -136,9 +134,14 @@ app.get("/api/events/:id/pop", function (req, res) {
     }
   }
   res.json(matchedEvent.getSongs()[0]);
+  matchedEvent.setCurrentSong(matchedEvent.getSongs()[0]);
   matchedEvent.songs.splice(0,1);
+
 });
 
+app.get("/api/events/:id/currentSong", function() {
+
+})
 
 app.listen(PORT, function () {
   console.log("Express listening on Port "+PORT);

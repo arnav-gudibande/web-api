@@ -3,6 +3,7 @@ var name;
 var id;
 var persons = [];
 var songs = [];
+var currentSong;
 
 function Event(name, id) {
     this.name = name;
@@ -18,6 +19,10 @@ function Event(name, id) {
 
     this.getSongs = function() {
       return this.sort();
+    }
+
+    this.setCurrentSong(song) {
+      this.currentSong = song;
     }
 
     this.boostSong = function(sid) {
