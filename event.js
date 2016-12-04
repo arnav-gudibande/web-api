@@ -21,8 +21,12 @@ function Event(name, id) {
       return this.sort();
     }
 
-    this.setCurrentSong(song) {
+    this.setCurrentSong = function(song) {
       this.currentSong = song;
+    }
+
+    this.getCurrentSong = function() {
+      return this.currentSong;
     }
 
     this.boostSong = function(sid) {

@@ -133,13 +133,24 @@ app.get("/api/events/:id/pop", function (req, res) {
       matchedEvent = events[i];
     }
   }
+
   res.json(matchedEvent.getSongs()[0]);
   matchedEvent.setCurrentSong(matchedEvent.getSongs()[0]);
-  matchedEvent.songs.splice(0,1);
+  matchedEvent.getSongs().splice(0,1);
 
 });
 
-app.get("/api/events/:id/currentSong", function() {
+app.get("/api/events/:id/currentSong", function(req, res) {
+  var eventID = parseInt(req.params.id, 10);
+  var matchedEvent;
+
+  for(var i=0; i<events.length; i++) {
+    if(eventID===events[i].id) {
+      matchedEvent = events[i];
+    }
+  }
+
+  res.json(matchedEvent.getCurrentSong());
 
 })
 
