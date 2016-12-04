@@ -17,10 +17,11 @@ function Event(name, id) {
     }
 
     this.getSongs = function() {
-      return sort();
+      return this.sort();
     }
+
     this.sort = function () {
-      var old = songs[];
+      var old = songs;
       var ratings = [];
       for(var i = 0; i < songs.length; i++) {
         ratings.push(songs[i].boostRating);
