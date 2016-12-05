@@ -7,7 +7,7 @@ var PORT = process.env.PORT || 3000;
 var events = [];
 var eventNextId = 1;
 var personID = 1;
-var songNextID = 1;
+var songNextID = 0;
 app.use(bodyParser.urlencoded());
 
 app.get("/", function (req, res) {
@@ -99,7 +99,6 @@ app.post("/api/events/:id/songs", function (req, res) {
   req.body.urlAlbumArt = req.body.urlAlbumArt.trim();
   req.body.boostRating = req.body.boostRating.trim();
 
-  req.body.id = songNextID++;
   req.body.boostRating = parseInt(req.body.boostRating, 10);
 
   matchedEvent.addSong(req.body.name, req.body.artist, req.body.id, req.body.boostRating, req.body.urlAlbumArt);
@@ -111,7 +110,7 @@ app.post("/api/events/:id/songs", function (req, res) {
 
 app.put("/api/events/:id/songs/:sid/boost", function (req, res) {
   var eventID = parseInt(req.params.id, 10);
-  var songID = parseInt(req.params.sid, 10);
+  var songID = req.params.sid;
   var matchedEvent;
 
   for(var i=0; i<events.length; i++) {
@@ -119,8 +118,9 @@ app.put("/api/events/:id/songs/:sid/boost", function (req, res) {
       matchedEvent = events[i];
     }
   }
+  console.log(songID);
   matchedEvent.boostSong(songID);
-  res.status(200).send();
+  res.json(matchedEvent.getSongs());
 });
 
 //GET {{apiUrl}}/api/events/:id/pop

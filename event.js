@@ -30,8 +30,12 @@ function Event(name, id) {
     }
 
     this.boostSong = function(sid) {
-      var x = parseInt(songs[sid].boostRating, 10) + 1;
-      songs[sid].boostRating = x;
+      for (var i = 0; i < songs.length; i++) {
+        if(songs[i].id === sid) {
+          songs[i].incrementBoost();
+        }
+      }
+
     }
 
     this.sort = function () {
