@@ -128,6 +128,7 @@ app.put("/api/events/:id/songs/:sid/boost", function (req, res) {
 app.get("/api/events/:id/pop", function (req, res) {
   var eventID = parseInt(req.params.id, 10);
   var matchedEvent;
+  console.log("Got called POP");
 
   for(var i=0; i<events.length; i++) {
     if(eventID===events[i].id) {
