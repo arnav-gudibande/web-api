@@ -1,21 +1,20 @@
 var Song = require("./song.js")
-var name;
-var id;
-var persons = [];
-var songs = [];
-var currentSong;
 
 function Event(name, id) {
     this.name = name;
     this.id = id;
+    this.songs = [];
+    this.currentSong = undefined;
+    this.persons = [];
+
 
     this.addPerson = function (name) {
-      persons.push(name);
-    }
+      this.persons.push(name);
+    };
 
     this.addSong = function(name, artist, id, boostRating, urlAlbumArt) {
-      songs.push(new Song(name, artist, id, boostRating, urlAlbumArt));
-    }
+      this.songs.push(new Song(name, artist, id, boostRating, urlAlbumArt));
+    };
 
     this.getSongs = function() {
       return this.sort();
@@ -30,19 +29,19 @@ function Event(name, id) {
     }
 
     this.boostSong = function(songID) {
-      for (var i = 0; i < songs.length; i++) {
-        if(songs[i].id === songID) {
-          songs[i].incrementBoost();
+      for (var i = 0; i < this.songs.length; i++) {
+        if(this.songs[i].id === songID) {
+          this.songs[i].incrementBoost();
         }
       }
 
     }
 
     this.sort = function () {
-      var old = songs;
+      var old = this.songs;
       var ratings = [];
-      for(var i = 0; i < songs.length; i++) {
-        ratings.push(songs[i].boostRating);
+      for(var i = 0; i < this.songs.length; i++) {
+        ratings.push(this.songs[i].boostRating);
       }
       ratings.sort(function(a, b){return b-a});
       var newSongs = [];
@@ -54,9 +53,9 @@ function Event(name, id) {
           }
         }
       }
-      songs = newSongs;
+      this.songs = newSongs;
 
-      return songs;
+      return this.songs;
     }
 
 
