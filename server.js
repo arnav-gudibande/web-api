@@ -100,7 +100,7 @@ app.post("/api/events/:id/songs", function (req, res) {
   req.body.boostRating = req.body.boostRating.trim();
 
   req.body.boostRating = parseInt(req.body.boostRating, 10);
-
+  console.log(matchedEvent);
   matchedEvent.addSong(req.body.name, req.body.artist, req.body.id, req.body.boostRating, req.body.urlAlbumArt);
   res.json(req.body);
 });
