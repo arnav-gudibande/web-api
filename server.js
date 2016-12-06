@@ -11,7 +11,7 @@ var songNextID = 0;
 app.use(bodyParser.urlencoded());
 
 app.get("/", function (req, res) {
-  res.send("Event API Root");
+  res.send("Events API Root");
 });
 
 
@@ -50,8 +50,10 @@ app.get("/api/events/:id", function (req, res) {
 // POST {{apiUrl}}/api/events/:id/join
 
 app.post("/api/events/:id/join", function (req, res) {
+
   var eventID = parseInt(req.params.id, 10);
   var body = _.pick(req.body, "fullname");
+  console.log("Join Request for Event: " + eventID);
   var matchedEvent;
   if((!_.isString(body.fullname)) || (body.fullname.trim().length === 0)) {
     return res.status(400).send();
@@ -71,6 +73,7 @@ app.post("/api/events/:id/join", function (req, res) {
 // GET {{apiUrl}}/api/events/:id/songs
 
 app.get("/api/events/:id/songs", function (req, res) {
+  console.log("Retrieving list of songs");
   var eventID = parseInt(req.params.id, 10);
   var matchedEvent;
 
@@ -100,7 +103,6 @@ app.post("/api/events/:id/songs", function (req, res) {
   req.body.boostRating = req.body.boostRating.trim();
 
   req.body.boostRating = parseInt(req.body.boostRating, 10);
-  console.log(matchedEvent);
   matchedEvent.addSong(req.body.name, req.body.artist, req.body.id, req.body.boostRating, req.body.urlAlbumArt);
   res.json(req.body);
 });
@@ -109,6 +111,7 @@ app.post("/api/events/:id/songs", function (req, res) {
 // PUT {{apiUrl}}/api/events/:id/songs/:id/boost
 
 app.put("/api/events/:id/songs/:sid/boost", function (req, res) {
+
   var eventID = parseInt(req.params.id, 10);
   var songID = req.params.sid;
   var matchedEvent;
@@ -118,7 +121,7 @@ app.put("/api/events/:id/songs/:sid/boost", function (req, res) {
       matchedEvent = events[i];
     }
   }
-  console.log(songID);
+  console.log("Boosting " + songID);
   matchedEvent.boostSong(songID);
   res.json(matchedEvent.getSongs());
 });

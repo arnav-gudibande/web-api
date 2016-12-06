@@ -29,9 +29,9 @@ function Event(name, id) {
       return this.currentSong;
     }
 
-    this.boostSong = function(sid) {
+    this.boostSong = function(songID) {
       for (var i = 0; i < songs.length; i++) {
-        if(songs[i].id === sid) {
+        if(songs[i].id === songID) {
           songs[i].incrementBoost();
         }
       }
