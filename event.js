@@ -38,23 +38,30 @@ function Event(name, id) {
     }
 
     this.sort = function () {
-      var old = this.songs;
-      var ratings = [];
-      for(var i = 0; i < this.songs.length; i++) {
-        ratings.push(this.songs[i].boostRating);
-      }
-      ratings.sort(function(a, b){return b-a});
-      var newSongs = [];
-      for(var i = 0; i < ratings.length; i++) {
-        for(var j = 0; j <old.length; j++) {
-          if(ratings[i] === old[j].boostRating) {
-            newSongs.push(old[j]);
-            old.splice(j,1);
-          }
+      var shouldSort = false;
+      for(var i = 1; i < this.songs.length; i++) {
+        if(this.songs[i].boostRating > this.songs[i-1].boostRating) {
+          shouldSort = true;
         }
       }
-      this.songs = newSongs;
-
+      if(shouldSort === true) {
+        var old = this.songs;
+        var ratings = [];
+        for(var i = 0; i < this.songs.length; i++) {
+          ratings.push(this.songs[i].boostRating);
+        }
+        ratings.sort(function(a, b){return b-a});
+        var newSongs = [];
+        for(var i = 0; i < ratings.length; i++) {
+          for(var j = 0; j <old.length; j++) {
+            if(ratings[i] === old[j].boostRating) {
+              newSongs.push(old[j]);
+              old.splice(j,1);
+            }
+          }
+        }
+        this.songs = newSongs;
+    }
       return this.songs;
     }
 
