@@ -20,13 +20,13 @@ Response: { “name”: {{event_name}} }
 
 
 ### POST {{url}}/api/events/{{event_id}}/join
-#### User can join an event by specifying its ID
+#### User can join an event by specifying the event ID
 
 Request: { “fullname”: {{full_name}} }
 
 
 ### GET {{url}}/api/events/{{event_id}}/songs
-#### Gets a list of all songs 
+#### Gets a list of all songs from an event ID
 
 Response: { “name”: {{song_name}}, “artist”: {{song_artist}}, “id”, {{spotify_id}}}
 
@@ -50,6 +50,6 @@ Response: { “name”: {{song_name}}, “artist”: {{song_artist}}, “id”, 
 
 
 ### GET {{url}}/api/events/{{event_id}}/current
-#### Gets the user's current song
+#### Gets the event's current song
 
 Response: { “name”: {{song_name}}, “artist”: {{song_artist}}, “id”, {{spotify_id}}, “urlAlbumArt”: {{url_album_art}}, “boostRating”: {{boost_rating}}}
