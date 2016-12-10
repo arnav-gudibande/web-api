@@ -1,120 +1,101 @@
-var express = require("express");
-var bodyParser = require("body-parser");
-var Event = require("./event.js");
-var _ = require("underscore");
+/*jshint esversion: 6 */
+/* jshint node: true */
+"use strict";
 
-var app = express();
 var PORT = process.env.PORT || 3000;
+
+const Event = require("./event.js");
+
+const bodyParser = require("body-parser");
+const _ = require("underscore");
+const express = require('express');
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('static'));
+
+// Run server to listen on port 3000.
+const server = app.listen(PORT, () => {
+  console.log('listening on *:3000');
+});
+
+const io = require('socket.io')(server);
 
 var events = [];
 
-app.use(bodyParser.urlencoded());
+io.on('connection', (socket) => {
+  console.log('a user connected');
 
-app.get("/", function (req, res) {
-  res.send("Events API Root");
+  socket.on('joinEvent', function(event_id) {
+    if(Object.keys(socket.rooms).length > 1) {
+      socket.emit("error", {"message": "User is already part of an event", "event": "joinEvent"});
+
+      return;
+    }
+
+    if(parseInt(event_id) === undefined) {
+      socket.emit("error", {"message": "Event does not exist", "event": "joinEvent"});
+
+      return;
+    }
+
+    console.log("User (" + socket.id + ") joining event: " + event_id);
+
+      socket.join(parseInt(event_id));
+      events[parseInt(event_id)].addPerson(socket.id);
+
+      socket.emit("eventInfo", events[parseInt(event_id)].json());
+  });
+
+  socket.on('getCurrentSong', () => {
+    socket.emit("currentSong", {"song": events[socket.rooms[Object.keys(socket.rooms)[0]]].currentSong});
+  });
+
+  socket.on('getEventSongs', () => {
+    console.log('Get songs: ' + socket.rooms[Object.keys(socket.rooms)[0]]);
+
+    socket.emit("eventSongs", events[socket.rooms[Object.keys(socket.rooms)[0]]].getSongs());
+  });
+
+  socket.on('addSong', function(song) {
+    console.log("Adding Song: " + song.name + " to event " + socket.rooms[Object.keys(socket.rooms)[0]] + " of events " + Object.keys(socket.rooms));
+
+    events[socket.rooms[Object.keys(socket.rooms)[0]]].addSong(song.name, song.artist, song.id, 0, song.urlAlbumArt);
+
+    io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit('newSong', events[socket.rooms[Object.keys(socket.rooms)[0]]].getSongs()[events[Object.keys(socket.rooms)[0]].getSongs().length-1]);
+  });
+
+  socket.on('boostSong', function(song_id) {
+    console.log("Boost song");
+
+    io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit('songBoosted', events[socket.rooms[Object.keys(socket.rooms)[0]]].boostSong(song_id));
+    io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit("eventSongs", events[socket.rooms[Object.keys(socket.rooms)[0]]].getSongs());
+  });
+
+  socket.on('popSong', () => {
+    console.log("Popping song");
+
+    io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit('popped', events[socket.rooms[Object.keys(socket.rooms)[0]]].pop());
+    io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit("eventSongs", events[socket.rooms[Object.keys(socket.rooms)[0]]].getSongs());
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 });
-
 
 // POST {{apiUrl}}/api/events/create
 app.post("/api/events/create", function (req, res) {
+  console.log("Create new event");
+
   var body = _.pick(req.body, "name");
 
   if((!_.isString(body.name)) || (body.name.trim().length === 0)) {
     return res.status(400).send();
   }
 
-  body.name = body.name.trim();
-  body.id = events.length;
-  events.push(new Event(body.name, body.id));
-  res.json(body);
-});
+  var event = new Event(body.name.trim(), events.length);
+  events.push(event);
 
-// GET {{apiUrl}}/api/events/:id
-app.get("/api/events/:id", function (req, res) {
-  console.log(events);
-  if (events[req.params.id] !== undefined) {
-    res.json(events[req.params.id]);
-  } else {
-    res.status(404).send();
-  }
-});
-
-// POST {{apiUrl}}/api/events/:id/join
-app.post("/api/events/:id/join", function (req, res) {
-  var body = _.pick(req.body, "fullname");
-
-  console.log("Join Request for Event: " + eventID);
-
-  if((!_.isString(body.fullname)) || (body.fullname.trim().length === 0)) {
-    return res.status(400).send();
-  }
-
-  events[req.params.id].addPerson(body.fullname);
-
-  res.json(body);
-});
-
-// GET {{apiUrl}}/api/events/:id/songs
-app.get("/api/events/:id/songs", function (req, res) {
-  console.log("Retrieving list of songs");
-
-  if (events[req.params.id] === undefined) {
-    res.status(404).send();
-    return;
-  }
-
-  res.json(events[req.params.id].getSongs());
-});
-
-// POST {{apiUrl}}/api/events/:id/songs
-app.post("/api/events/:id/songs", function (req, res) {
-  //TODO: validate these values
-
-  req.body.name = req.body.name.trim();
-  req.body.artist = req.body.artist.trim();
-  req.body.id = req.body.id.trim();
-  req.body.urlAlbumArt = req.body.urlAlbumArt.trim();
-
-  events[req.params.id].addSong(req.body.name, req.body.artist, req.body.id, 0, req.body.urlAlbumArt);
-
-  res.json(req.body);
-});
-
-
-// PUT {{apiUrl}}/api/events/:id/songs/:id/boost
-app.put("/api/events/:id/songs/:song_id/boost", function (req, res) {
-  if (events[req.params.id] === undefined) {
-    res.status(404).send();
-    return;
-  }
-
-  console.log("Boosting " + req.params.song_id);
-
-  events[req.params.id].boostSong(req.params.song_id);
-  res.json(events[req.params.id].getSongs());
-});
-
-//GET {{apiUrl}}/api/events/:id/pop
-app.get("/api/events/:id/pop", function (req, res) {
-  if (events[req.params.id] === undefined) {
-    res.status(404).send();
-    return;
-  }
-
-  res.json(events[req.params.id].getSongs()[0]);
-  events[req.params.id].setCurrentSong(events[req.params.id].getSongs()[0]);
-  events[req.params.id].getSongs().splice(0,1);
-});
-
-app.get("/api/events/:id/currentSong", function(req, res) {
-  if (events[req.params.id] === undefined) {
-    res.status(404).send();
-    return;
-  }
-
-  res.json(events[req.params.id].getCurrentSong());
-});
-
-app.listen(PORT, function () {
-  console.log("Express listening on Port "+PORT);
+  res.json(event.json());
 });

@@ -1,4 +1,4 @@
-var Song = require("./song.js")
+var Song = require("./song.js");
 
 function Event(name, id) {
     this.name = name;
@@ -17,57 +17,70 @@ function Event(name, id) {
     };
 
     this.getSongs = function() {
-      return this.sort();
-    }
-
-    this.setCurrentSong = function(song) {
-      this.currentSong = song;
-    }
+      //return this.sort();
+      return this.songs;
+    };
 
     this.getCurrentSong = function() {
       return this.currentSong;
-    }
+    };
 
     this.boostSong = function(songID) {
       for (var i = 0; i < this.songs.length; i++) {
         if(this.songs[i].id === songID) {
           this.songs[i].incrementBoost();
-        }
-      }
 
-    }
 
-    this.sort = function () {
-      var shouldSort = false;
-      for(var i = 1; i < this.songs.length; i++) {
-        if(this.songs[i].boostRating > this.songs[i-1].boostRating) {
-          shouldSort = true;
-        }
-      }
-      if(shouldSort === true) {
-        var old = this.songs;
-        var ratings = [];
-        for(var i = 0; i < this.songs.length; i++) {
-          ratings.push(this.songs[i].boostRating);
-        }
-        ratings.sort(function(a, b){return b-a});
-        var newSongs = [];
-        for(var i = 0; i < ratings.length; i++) {
-          for(var j = 0; j <old.length; j++) {
-            if(ratings[i] === old[j].boostRating) {
-              newSongs.push(old[j]);
-              old.splice(j,1);
+          if(i >= 1 && this.songs[i].boostRating > this.songs[i-1].boostRating) {
+            this.songs.swap(i, i-1);
+
+            var flag = true;
+            var movedUp = 1;
+            while (flag) {
+              if (i-movedUp-1 < 0) {
+                flag = false;
+                break;
+              }
+
+              if (this.songs[i-movedUp].boostRating > this.songs[i-movedUp-1].boostRating) {
+                this.songs.swap(i-movedUp, i-movedUp-1);
+                movedUp += 1;
+              } else {
+                flag = false;
+              }
             }
+
+
+            return {"data": this.songs[i-movedUp], "oldIndex":i, "newIndex": i-movedUp};
+
+          } else {
+            return {"data": this.songs[i], "oldIndex":i, "newIndex": i};
           }
+
+          break;
         }
-        this.songs = newSongs;
-    }
-      return this.songs;
-    }
+      }
+    };
 
+    this.pop = function() {
+      this.currentSong = this.songs.shift();
 
+      return this.currentSong;
+    };
+
+    this.json = function() {
+      return {"name": this.name, "id": this.id+"", "songs": this.getSongs(), "currentSong": this.currentSong};
+    };
 }
 
+Array.prototype.swap = function(indexA, indexB) {
+   swapArrayElements(this, indexA, indexB);
+};
 
+var swapArrayElements = function(arr, indexA, indexB) {
+  var temp = arr[indexA];
+  arr[indexA] = arr[indexB];
+  arr[indexB] = temp;
+};
 
-module.exports = Event
+module.exports = Event;

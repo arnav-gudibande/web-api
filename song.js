@@ -12,8 +12,8 @@ function Song(name, artist, id, boostRating, urlAlbumArt) {
   this.urlAlbumArt = urlAlbumArt;
 
   this.incrementBoost = function() {
-    this.boostRating+=1;
-  }
+    this.boostRating += 1;
+  };
 }
 
-module.exports = Song
+module.exports = Song;
