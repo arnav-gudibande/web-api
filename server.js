@@ -5,6 +5,7 @@
 var PORT = process.env.PORT || 3000;
 
 const Event = require("./event.js");
+const SpotifyManager = require("./SpotifyManager.js");
 
 const bodyParser = require("body-parser");
 const _ = require("underscore");
@@ -99,3 +100,6 @@ app.post("/api/events/create", function (req, res) {
 
   res.json(event.json());
 });
+
+app.post("/spotify/swap", SpotifyManager.swap);
+app.post("/spotify/refresh", SpotifyManager.refresh);
