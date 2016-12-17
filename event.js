@@ -24,17 +24,17 @@ function Event(name, id) {
     this.getCurrentSong = function() {
       return this.currentSong;
     };
-    
-    this.checkDuplicate = function(songID) {
-        var duplicate = false;
+
+    this.isDuplicate = function(songID) {
         for(var i = 0; i < this.songs.length; i++) {
             if(songID === this.songs[i].id) {
-                duplicate = true;
+                return true;
             }
         }
-        return duplicate;
+
+        return false;
     };
-    
+
     this.returnLastSong = function() {
         return this.songs[this.songs.length-1];
     }

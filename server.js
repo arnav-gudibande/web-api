@@ -60,12 +60,13 @@ io.on('connection', (socket) => {
 
   socket.on('addSong', function(song) {
     console.log("Adding Song: " + song.name + " to event " + socket.rooms[Object.keys(socket.rooms)[0]] + " of events " + Object.keys(socket.rooms));
-    if(events[socket.rooms[Object.keys(socket.rooms)[0]]].checkDuplicate(song.id) === true) {
+    if(events[socket.rooms[Object.keys(socket.rooms)[0]]].isDuplicate(song.id)) {
       console.log("Song is a duplicate!");
+      socket.emit("error", {"message": "Song has already been added to event", "event": "addSong"});
     }
     else {
       events[socket.rooms[Object.keys(socket.rooms)[0]]].addSong(song.name, song.artist, song.id, 0, song.urlAlbumArt);
-      io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit('newSong', events[socket.rooms[Object.keys(socket.rooms)[0]]].returnLastSong();
+      io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit('newSong', events[socket.rooms[Object.keys(socket.rooms)[0]]].returnLastSong());
     }
   });
 
