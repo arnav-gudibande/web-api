@@ -29,13 +29,13 @@ io.on('connection', (socket) => {
 
   socket.on('joinEvent', function(event_id) {
     if(Object.keys(socket.rooms).length > 1) {
-      socket.emit("error", {"message": "User is already part of an event", "event": "joinEvent"});
+      socket.emit("DiscoError", {"message": "User is already part of an event", "event": "joinEvent"});
 
       return;
     }
 
     if(events[parseInt(event_id)] === undefined) {
-      socket.emit("error", {"message": "Event does not exist", "event": "joinEvent"});
+      socket.emit("DiscoError", {"message": "Event does not exist", "event": "joinEvent"});
 
       return;
     }
@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
     console.log("Adding Song: " + song.name + " to event " + socket.rooms[Object.keys(socket.rooms)[0]] + " of events " + Object.keys(socket.rooms));
     if(events[socket.rooms[Object.keys(socket.rooms)[0]]].isDuplicate(song.id)) {
       console.log("Song is a duplicate!");
-      socket.emit("error", {"message": "Song has already been added to event", "event": "addSong"});
+      socket.emit("DiscoError", {"message": "Song has already been added to event", "event": "addSong"});
     }
     else {
       events[socket.rooms[Object.keys(socket.rooms)[0]]].addSong(song.name, song.artist, song.id, 0, song.urlAlbumArt);

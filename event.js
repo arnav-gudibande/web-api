@@ -37,7 +37,7 @@ function Event(name, id) {
 
     this.returnLastSong = function() {
         return this.songs[this.songs.length-1];
-    }
+    };
 
     this.boostSong = function(songID) {
       for (var i = 0; i < this.songs.length; i++) {
