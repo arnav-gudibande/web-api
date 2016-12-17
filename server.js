@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if(parseInt(event_id) === undefined) {
+    if(events[parseInt(event_id)] === undefined) {
       socket.emit("error", {"message": "Event does not exist", "event": "joinEvent"});
 
       return;
