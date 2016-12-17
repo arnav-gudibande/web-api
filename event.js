@@ -24,6 +24,20 @@ function Event(name, id) {
     this.getCurrentSong = function() {
       return this.currentSong;
     };
+    
+    this.checkDuplicate = function(songID) {
+        var duplicate = false;
+        for(var i = 0; i < this.songs.length; i++) {
+            if(songID === this.songs[i].id) {
+                duplicate = true;
+            }
+        }
+        return duplicate;
+    };
+    
+    this.returnLastSong = function() {
+        return this.songs[this.songs.length-1];
+    }
 
     this.boostSong = function(songID) {
       for (var i = 0; i < this.songs.length; i++) {
