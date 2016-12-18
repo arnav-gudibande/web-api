@@ -28,14 +28,18 @@ io.on('connection', (socket) => {
   console.log('a user connected');
 
   socket.on('joinEvent', function(event_id) {
+    console.log("JOINING EVENT");
     if(Object.keys(socket.rooms).length > 1) {
       socket.emit("DiscoError", {"message": "User is already part of an event", "event": "joinEvent"});
 
       return;
     }
+    console.log(events[parseInt(event_id)]);
+
 
     if(events[parseInt(event_id)] === undefined) {
       socket.emit("DiscoError", {"message": "Event does not exist", "event": "joinEvent"});
+      socket.disconnect();
 
       return;
     }
