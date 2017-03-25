@@ -33,11 +33,11 @@
         <script type = 'text/javascript' src = 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js'></script>
         <script type = 'text/javascript'>
             $(document).ready(function () {
-                var log = function (text) {
-                    var outputdiv = $('#output')[0];
-                    outputdiv.appendChild(document.createTextNode(text));
-                    outputdiv.appendChild(document.createElement('br'));
-                };
+                // var log = function (text) {
+                //     var outputdiv = $('#output')[0];
+                //     outputdiv.appendChild(document.createTextNode(text));
+                //     outputdiv.appendChild(document.createElement('br'));
+                // };
                 var socket = io();
                 $('#submit').click(function () {
                     var e = $('#event')[0].value;
@@ -45,8 +45,8 @@
                     socket.emit(e, d);
                 });
                 socket.on('connect', function () {
-                    log('connected');
-                    log('socket id: ' + socket.id);
+                    console.log('connected');
+                    console.log('socket id: ' + socket.id);
                 });
                 socket.on('currentSong', function (e) {
                     console.log(e);
@@ -62,9 +62,9 @@
         Data: <input id = 'data' type = 'text'/><br/>
         <button id = 'submit'>Test</button><br/>
         <br/>
-        <u>Output</u><br/>
+        <!-- <u>Output</u><br/>
         <div id = 'output'>
 
-        </div>
+        </div> -->
     </body>
 </html>
