@@ -1,0 +1,111 @@
+    *
+
+// disco blockfile
+
+// define custom blocks
+!break
+    init
+        {
+            return Block('span').add('br');
+        }
+    load
+        {
+            data('val', function (val) {
+                for (var i = 1; i < val; i++)
+                    block.add('br');
+            });
+        }
+!text
+    init
+        {
+            return Block('span');
+        }
+    load
+        {
+            data('val', function (val) {
+                block.node().appendChild(document.createTextNode(val));
+            });
+            data('html', function (html) {
+                block.html(html);
+            });
+        }
+!image
+    init
+        {
+            return Block('div');
+        }
+    load
+        {
+            var src = data('src');
+            var height = data('height');
+            var width = data('width');
+            var alt = data('alt');
+            if (src != null) {
+                block.css('background-image', "url('" + src + "')")
+                    .css('background-repeat', 'no-repeat')
+                    .css('background-size', 'contain')
+                ;
+            }
+            if (height !== null) block.css('height', height);
+            else block.css('height', 'auto');
+            if (width !== null) block.css('width', width);
+            else block.css('width', 'auto');
+            if (alt !== null) block.attribute('title', alt);
+        }
+// app content layer
+app
+    :open
+        {
+            block
+                .css('transition', 'opacity 0.5s ease')
+                .css('opacity', '1')
+            ;
+        }
+    css
+        width 100%
+        height 100%
+        opacity 0
+        transition opacity 1s ease
+        position relative
+    div login
+        css
+            background-color #222
+            width 100%
+            height 100%
+        block content
+            image image
+                src img/DiscoParty.png
+                height 280px
+                width 280px
+                css
+                    margin 0 auto
+                    display block
+            text title
+                val DiscoParty
+                css
+                    display block
+                    margin -10px auto 10px
+                    font-size 50px
+                    font-weight bold
+                    color #eee
+            div join
+                css
+                    background-color #59b265
+                    border-radius 5px
+                    width 300px
+                    height 65px
+                    margin 60px auto 20px
+                    cursor pointer
+                 block content
+                     text text
+                         val Join Party
+                         css
+                            font-size 30px
+                            color white
+                            // font-weight bold
+                :mouseover
+                    css
+                        background-color #539b5d
+                :mouseout
+                    css
+                        background-color #59b265

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>DiscoParty Socket Tests</title>
+        <style type = 'text/css'>
+            @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300italic,600italic,300,600");
+            * {
+                font-family: 'Source Sans Pro', Arial, sans-serif;
+            }
+            html, body {
+                margin: 0;
+                height: 100%;
+                width: 100%;
+                background-color: #efefef;
+                text-align: center;
+            }
+            ::-webkit-scrollbar {
+                display: none;
+            }
+            #submit {
+                width: 70px;
+            }
+            #output {
+                width: 500px;
+                height: 400px;
+                background-color: #ccc;
+                margin: 10px auto;
+                overflow: scroll;
+            }
+        </style>
+        <script type = 'text/javascript' src = 'js/jquery-1.12.4.min.js'></script>
+        <script type = 'text/javascript' src = 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js'></script>
+        <script type = 'text/javascript'>
+            $(document).ready(function () {
+                var log = function (text) {
+                    var outputdiv = $('#output')[0];
+                    outputdiv.appendChild(document.createTextNode(text));
+                    outputdiv.appendChild(document.createElement('br'));
+                };
+                var socket = io('disco-party.herokuapp.com');
+                $('#submit').click(function () {
+                    var e = $('#event')[0].value;
+                    var d = $('#data')[0].value;
+                    socket.emit(e, d);
+                });
+                socket.on('connect', function () {
+                    log('connected');
+                    log('socket id: ' + socket.id);
+                });
+                socket.on('*', function (e) {
+                    console.log(e);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <br/>
+        <h1>DiscoParty Socket Tests</h1>
+        <br/>
+        Event: <input id = 'event' type = 'text'/><br/>
+        Data: <input id = 'data' type = 'text'/><br/>
+        <button id = 'submit'>Test</button><br/>
+        <br/>
+        <u>Output</u><br/>
+        <div id = 'output'>
+
+        </div>
+    </body>
+</html>
