@@ -38,7 +38,7 @@
                     outputdiv.appendChild(document.createTextNode(text));
                     outputdiv.appendChild(document.createElement('br'));
                 };
-                var socket = io('disco-party.herokuapp.com');
+                var socket = io();
                 $('#submit').click(function () {
                     var e = $('#event')[0].value;
                     var d = $('#data')[0].value;
