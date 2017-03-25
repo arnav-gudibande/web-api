@@ -48,7 +48,7 @@
                     log('connected');
                     log('socket id: ' + socket.id);
                 });
-                socket.on('*', function (e) {
+                socket.on('currentSong', function (e) {
                     console.log(e);
                 });
             });
