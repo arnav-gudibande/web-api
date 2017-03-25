@@ -39,6 +39,14 @@
                 //     outputdiv.appendChild(document.createElement('br'));
                 // };
                 var socket = io();
+                var onevent = socket.onevent;
+                socket.onevent = function (packet) {
+                    var args = packet.data || [];
+                    onevent.call (this, packet);
+                    packet.data = ["*"].concat(args);
+                    onevent.call(this, packet);
+                };
+
                 $('#submit').click(function () {
                     var e = $('#event')[0].value;
                     var d = $('#data')[0].value;
@@ -51,7 +59,7 @@
                 socket.on('*', function (e) {
                     console.log(e);
                 });
-                
+
             });
         </script>
     </head>
