@@ -52,7 +52,7 @@
                     window.location.reload();
                 },
                 connect: function () {
-                    app.socket.on('connect', function () {
+                    app.socket.on('connect', function (socket) {
                         console.log('connected');
                         console.log('socket id: ' + socket.id);
                     });
