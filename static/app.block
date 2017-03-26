@@ -74,7 +74,7 @@ app
         opacity 0
         transition opacity 1s ease
         position relative
-        overflow hidden
+        // overflow hidden
     div login
         css
             background-color #222
@@ -369,6 +369,7 @@ app
                     height 2px
                     background-color #888
                     z-index 16
+                    opacity 0
             :load
                 {
                     console.log(data);
@@ -582,14 +583,29 @@ app
                 background-color #222
                 z-index 10
             :show
-                css
-                    top 0
                 {
-                    block.child('results').empty().sibling('bar').child('input').node().value = '';
+                    block.css({
+                        display: 'block',
+                        zIndex: '40',
+                        transition: 'top 0.3 ease-out'
+                    });
+                    setTimeout(function () {
+                        block.css('top', '0').child('results').empty().sibling('bar').child('input').node().value = '';
+                    }, 50);
                 }
             :hide
-                css
-                    top 100%
+                {
+                    block.css('transition', 'top 0.3 ease-in');
+                    setTimeout(function () {
+                        block.css('top', '100%');
+                    }, 50);
+                    setTimeout(function () {
+                        block.css('display', 'none').css('z-index', '-40');
+                    }, 300);
+                }
+            {
+                block.on('hide');
+            }
             block bar
                 css
                     position absolute
