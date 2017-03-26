@@ -374,7 +374,7 @@ app
                     block.child('name/text').html('').data(data.name);
                     block.child('artist/text').html('').data(data.artist);
                     block.child('artwork/image').data({
-                        src: data.src,
+                        src: data.urlAlbumArt,
                         height: '100px',
                         width: '100px'
                     });
