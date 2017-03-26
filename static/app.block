@@ -403,6 +403,12 @@ app
                                 cursor: 'pointer',
                                 transition: 'backround-color 0.3s ease'
                             })
+                            .query('window width < 620', function () {
+                                block.css('width', '92%');
+                            })
+                            .query('window width >= 620', function () {
+                                block.css('width', '80%');
+                            })
                             .on('mouseover', function (e, b) {
                                 if (!block.key('locked')) b.css('background-color', '#1b1b1b');
                             })
@@ -514,6 +520,7 @@ app
                         });
                     });
                     block.id(block.mark());
+                    Block.queries();
                 }
         div content
             css
@@ -618,7 +625,10 @@ app
                 input input
                     type text
                     css
-                        width 80%
+                        width auto
+                        left 40px
+                        top 20px
+                        position absolute
                         height 40px
                         padding 10px 30px
                         border-radius 8px
@@ -627,6 +637,10 @@ app
                         background-color #1a1a1a
                         border none
                         color #eee
+                    @query window width != 0
+                        {
+                            block.css('width', (window.innerWidth - 80 - 60) + 'px');
+                        }
                 div image
                     image image
                         src img/search.png
@@ -635,7 +649,7 @@ app
                     css
                         position absolute
                         top 28px
-                        right 40px
+                        right 50px
                         opacity 0.6
                         cursor pointer
                         transition opacity 0.14s
