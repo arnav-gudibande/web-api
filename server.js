@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
 
         if(events[parseInt(event_id)] === undefined) {
             socket.emit("DiscoError", {"message": "Event does not exist", "event": "joinEvent"});
-            socket.disconnect();
+            // socket.disconnect();
 
             return;
         }
@@ -106,7 +106,6 @@ io.on('connection', (socket) => {
             host: 'https://api.spotify.com',
             path: '/v1/user/' + userid + '/playlist/' + playlistid + '/tracks'
         }, function (response) {
-            // Continuously update stream with data
             var body = '';
             response.on('data', function(d) {
                 body += d;

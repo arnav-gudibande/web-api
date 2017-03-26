@@ -42,8 +42,10 @@
 
                 $('#submit').click(function () {
                     var e = $('#event')[0].value;
-                    var d = $('#data')[0].value;
-                    socket.emit(e, d);
+                    var d1 = $('#data1')[0].value;
+                    var d2 = $('#data2')[0].value;
+                    var d3 = $('#data3')[0].value;
+                    socket.emit(e, d1, d2, d3);
                 });
                 socket.on('connect', function () {
                     console.log('connected');
@@ -92,7 +94,9 @@
         <h1>DiscoParty Socket Tests</h1>
         <br/>
         Event: <input id = 'event' type = 'text'/><br/>
-        Data: <input id = 'data' type = 'text'/><br/>
+        Data1: <input id = 'data1' type = 'text'/><br/>
+        Data2: <input id = 'data2' type = 'text'/><br/>
+        Data3: <input id = 'data3' type = 'text'/><br/>
         <button id = 'submit'>Test</button><br/>
         <br/>
         <!-- <u>Output</u><br/>

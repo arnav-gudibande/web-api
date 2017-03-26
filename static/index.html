@@ -5,9 +5,13 @@
         <meta charset = 'utf-8'/>
         <meta name = 'author' content = 'sfhacks'/>
         <meta name = 'copyright' content = 'Copyright (c) 2017 sfhacks'/>
-        <meta name = 'viewport' content = 'width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=yes'/>
+        <meta name = 'viewport' content = 'width=device-width, initial-scale=0.7, maximum-scale=0.7, user-scalable=yes'/>
+        <meta name = 'apple-mobile-web-app-capable' content = 'yes'/>
+        <meta name = 'apple-mobile-web-app-status-bar-style' content = 'translucent'/>
         <link rel = 'alternate' href = 'http://anuv.me' hreflang = 'en-us' />
 		<link rel = 'icon' type = 'image/png' href = 'img/logo.png'/>
+        <link rel = 'apple-touch-icon' href = 'img/app.png'/>
+        <link rel = 'apple-touch-startup-image' href = 'img/app.png'/>
 		<style type = 'text/css'>
             @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300italic,600italic,300,600");
             * {
@@ -28,13 +32,64 @@
         <script type = 'text/javascript' src = 'js/block.js'></script>
         <script type = 'text/javascript' src = 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js'></script>
         <script type = 'text/javascript'>
-            var block = Block('div', 'app');
+            var app = {
+                socket: io(),
+                block: Block('div', 'app'),
+                cookie: function (id, val, date) {
+                    if (Block.is.unset(val))
+                        document.cookie.split('; ').forEach(function (cookie) {
+                            if (cookie.substring(0, id.length) == id)
+                                val = cookie.substring(id.length + 1);
+                        });
+                    else document.cookie = id + '=' + val + (Block.is.set(date) ? '; expires=' + date : '');
+                    return (Block.is.unset(val) ? null : val);
+                },
+                signin: function (eventID) {
+                    app.socket.emit('joinEvent', eventID);
+                },
+                signout: function () {
+                    app.cookie('eventID', '', 'Thu, 01 Jan 1970 00:00:01 GMT');
+                    window.location.reload();
+                },
+                connect: function () {
+                    app.socket.on('connect', function () {
+                        console.log('connected');
+                        console.log('socket id: ' + socket.id);
+                    });
+                    app.socket.on('DiscoError', function (e) {
+                        console.log('DiscoError');
+                        console.log(e);
+                        if (e.event == 'joinEvent') {
+                            app.block.child('login/modal').on('message', { message: e.message });
+                        }
+                    });
+                    app.socket.on('eventInfo', function (e) {
+                        console.log('eventInfo');
+                        console.log(e);
+                        app.cookie('eventID', e.id, 'Thu, 01 Jan 3005 00:00:01 GMT');
+                        app.block.on('view', { view: 'main', event: e });
+                    });
+                    setTimeout(function () {
+                        var cookieID = app.cookie('eventID');
+                        if (cookieID != null) {
+                            app.block.child('login/modal').on('show')
+                                .child('window/input/eventid').node().value = cookieID;
+                            app.block.child('login/modal/window/input/join').on('click');
+                        }
+                    }, 50);
+                },
+                boostSong: function (songID) {
+                    app.socket.emit('boostSong', songID);
+                }
+            };
             window.addEventListener('load', function () {
                 // setTimeout(function () {
-                    block.load(function () {
-                        block.fill(document.body);
+                    app.block.load(function () {
+                        app.block.fill(document.body);
                         setTimeout(function () {
-                            block.on('open');
+                            app.block.on('view', { view: 'login' });
+                            app.block.on('open');
+                            app.connect();
                         }, 20);
                         Block.queries();
                     }, 'app', 'jQuery');

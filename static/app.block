@@ -61,6 +61,13 @@ app
                 .css('opacity', '1')
             ;
         }
+    :view
+        {
+            var children = block.children();
+            for (var c in children)
+                children[c].css('display', 'none');
+            children[data.view].css('display', 'block').data(data);
+        }
     css
         width 100%
         height 100%
@@ -96,6 +103,7 @@ app
                     height 65px
                     margin 60px auto 20px
                     cursor pointer
+                    transition background-color 0.1s ease
                  block content
                      text text
                          val Join Party
@@ -109,3 +117,372 @@ app
                 :mouseout
                     css
                         background-color #59b265
+                :click
+                    {
+                        block.parent().sibling('modal').on('show');
+                    }
+        block modal
+            css
+                position fixed
+                top 0
+                left 0
+                right 0
+                bottom 0
+                background-color rgba(10, 10, 10, 0.7)
+                opacity 0
+                transition opacity 0.15s ease
+                display none
+            :show
+                {
+                    block.css('display', 'table').css('transition', 'opacity 0.5s ease');
+                    setTimeout(function () {
+                        block.css('opacity', '1');
+                    }, 30);
+                }
+            :hide
+                {
+                    block.css('opacity', '0');
+                    setTimeout(function () {
+                        block.css('display', 'none');
+                    }, 150);
+                }
+            :click
+                {
+                    block.on('hide');
+                }
+            :message
+                {
+                    block.child('window/input/message/text').html('').data(data.message);
+                }
+            div window
+                css
+                    height 250px
+                    width 350px
+                    margin 0 auto
+                    background-color #222
+                    border-radius 10px
+                div title
+                    text text
+                        val Join Event
+                        css
+                            display block
+                            padding-top 20px
+                            font-size 38px
+                            color #e0e0e0
+                div spacer
+                    css
+                        height 20px
+                div input
+                    input eventid
+                        type text
+                        placeholder Event Code
+                        css
+                            width 200px
+                            height 40px
+                            border-radius 5px
+                            border none
+                            font-size 20px
+                            padding 5px 15px
+                    div join
+                        css
+                            background-color #59b265
+                            border-radius 5px
+                            width 200px
+                            height 40px
+                            cursor pointer
+                            margin 10px auto
+                            padding 5px 15px
+                            transition background-color 0.1s ease
+                         block content
+                             text text
+                                 val Get Wild
+                                 css
+                                    font-size 25px
+                                    color white
+                                    text-transform uppercase
+                        :click
+                            {
+                                var val = block.sibling('eventid').node().value;
+                                if (val.trim() == '') {
+                                    block.parent(2).on('message', { message: 'Invalid Code' })
+                                } else {
+                                    app.signin(val);
+                                }
+                            }
+                    div message
+                        text text
+                            html &nbsp;
+                            css
+                                color #bb5555
+                :click
+                    {
+                        event.stopPropagation();
+                    }
+    div main
+        #event
+            {
+                block.child('menuTop/content/text').html('').data('On Deck - ' + event.id);
+                block.child('content').on('load', { event: event });
+            }
+        css
+            height auto
+            min-height 100%
+            width 100%
+            background-color #222
+        div menuTop
+            css
+                position fixed
+                top 0
+                left 0
+                right 0
+                height 130px
+                background-color #171717
+                z-index 5
+            block content
+                css
+                    position absolute
+                    top 0
+                    left 0
+                    right 0
+                    bottom 0
+                text text
+                    val On Deck – Event
+                    css
+                        text-transform uppercase
+                        color #f2f2f2
+                        font-size 44px
+            block search
+                css
+                    position absolute
+                    right 0
+                    top 0
+                    bottom 0
+                    width 120px
+                    height 130px
+                    opacity 0.65
+                    cursor pointer
+                    transition opacity 0.16s
+                :mouseover
+                    css
+                        opacity 0.8
+                :mouseout
+                    css
+                        opacity 0.65
+                image search
+                    src img/search.png
+                    height 70px
+                    width 70px
+                    css
+                        margin 0 auto
+            block logo
+                css
+                    position absolute
+                    left 0
+                    top 0
+                    bottom 0
+                    width 120px
+                    height 130px
+                    opacity 0.65
+                    cursor pointer
+                    transition opacity 0.16s
+                :mouseover
+                    css
+                        opacity 0.8
+                :mouseout
+                    css
+                        opacity 0.65
+                :click
+                    {
+                        app.signout();
+                    }
+                image logo
+                    src img/logo-white.png
+                    height 70px
+                    width 70px
+                    css
+                        margin 0 auto
+        div menuBottom
+            css
+                position fixed
+                bottom 0
+                left 0
+                right 0
+                height 140px
+                background-color #171717
+                z-index 5
+        !song
+            init
+                {
+                    var block = Block('div');
+                    block
+                        .key('num', 0)
+                        .css({
+                            height: '130px',
+                            padding: '10px 0'
+                        })
+                        .add(Block('div', 'content')
+                            .css({
+                                backgroundColor: '#1d1d1d',
+                                width: '80%',
+                                height: '100%',
+                                margin: '0 auto',
+                                borderRadius: '5px',
+                                position: 'relative',
+                                cursor: 'pointer'
+                            })
+                            .on('click', function (e, b) {
+                                app.boostSong(b.parent().mark());
+                            })
+                            .add(Block('block', 'num')
+                                .add(Block('text', 1)
+                                    .data({
+                                        val: '0',
+                                        css: {
+                                            fontSize: '90px',
+                                            fontWeight: 'bold',
+                                            color: '#ccc'
+                                        }
+                                    })
+                                )
+                                .css({
+                                    width: '80px',
+                                    position: 'absolute',
+                                    left: '20px'
+                                })
+                            )
+                            .add(Block('div', 'name')
+                                .add(Block('text', 1)
+                                    .data({
+                                        val: 'Song Name',
+                                        css: {
+                                            fontSize: '30px',
+                                            fontWeight: 'bold',
+                                            color: '#ccc'
+                                        }
+                                    })
+                                )
+                                .css({
+                                    marginLeft: '140px',
+                                    height: '32%',
+                                    textAlign: 'left',
+                                    paddingTop: '30px'
+                                })
+                                .query('window width != 0', function () {
+                                    block.css('width', (block.parent().$().width() - 140 - 120 - 20) + 'px');
+                                })
+                            )
+                            .add(Block('div', 'artist')
+                                .add(Block('text', 1)
+                                    .data({
+                                        val: 'Artist Name',
+                                        css: {
+                                            fontSize: '20px',
+                                            fontWeight: 'normal',
+                                            color: '#aaa',
+                                            textAlign: 'left',
+                                            paddingTop: '20px'
+                                        }
+                                    })
+                                )
+                                .css({
+                                    marginLeft: '140px',
+                                    height: '40%'
+                                })
+                                .query('window width != 0', function () {
+                                    block.css('width', (block.parent().$().width() - 140 - 120 - 20) + 'px');
+                                })
+                            )
+                            .add(Block('block', 'artwork')
+                                .add(Block('image', 1)
+                                    .data({
+                                        src: 'img/artwork.png',
+                                        height: '100px',
+                                        width: '100px'
+                                    })
+                                )
+                                .css({
+                                    width: '110px',
+                                    position: 'absolute',
+                                    right: '20px',
+                                    top: '0'
+                                })
+                            )
+                        )
+                    ;
+                    return block;
+                }
+            load
+                {
+                    data('num', function (num) {
+                        block.key('num', num).child('content/num/text').html('').data(num);
+                    });
+                    data('name', function (name) {
+                        block.child('content/name/text').html('').data(name);
+                    });
+                    data('artist', function (artist) {
+                        block.child('content/artist/text').html('').data(artist);
+                    });
+                    data('artwork', function (artwork) {
+                        block.child('content/artwork/image').data({
+                            src: artwork,
+                            height: '100px',
+                            width: '100px'
+                        });
+                    });
+                    block.id(block.mark());
+                }
+        div content
+            css
+                padding-top 140px
+                padding-bottom 150px
+                background-color #222
+            :load
+                {
+                    var songs = data.event.songs;
+                    for (var s in songs) {
+                        console.log(songs[s]);
+                        var song = songs[s];
+                        block.add(Block('song', song.id)
+                            .data({
+                                num: song.boostRating,
+                                name: song.name,
+                                artist: song.artist,
+                                artwork: song.urlAlbumArt
+                            })
+                        );
+                    }
+                }
+            {
+                var swaptime = 200;
+                var swap = function (s1, s2) {
+                    s1.child('content').css('transition', 'margin ' + (swaptime / 1000) + 's ease-in-out').css('margin-top', '150px');
+                    s2.child('content').css('transition', 'margin ' + (swaptime / 1000) + 's ease-in-out').css('margin-top', '-150px');
+                    console.log('false swap ' + s1.mark() + ', ' + s2.mark());
+                    setTimeout(function () {
+                        s1.child('content').css('transition', 'none').css('margin-top', '0');
+                        s2.child('content').css('transition', 'none').css('margin-top', '0');
+                        block.remove(s2.mark()).add(s2, s1.mark());
+                        console.log('real swap ' + s1.mark() + ', ' + s2.mark());
+                    }, swaptime);
+                };
+                var organizeList = function () {
+                    var children = block.$().children().toArray();
+                    var next = function (arr, i) {
+                        var t = 10;
+                        var b1 = block.child(children[i].getAttribute('id'));
+                        var b2 = block.child(children[i + 1].getAttribute('id'));
+                        if (parseInt(b1.key('num')) < parseInt(b2.key('num'))) {
+                            var ci = children[i];
+                            children[i] = children[i + 1];
+                            children[i + 1] = ci;
+                            swap(b1, b2);
+                            t = swaptime + 25;
+                        }
+                        if (i < children.length - 2)
+                            setTimeout(function () { next(children, i + 1); }, t);
+                        else setTimeout(function () { organizeList(); }, t);
+                    };
+                    if (!$.isEmptyObject(block.children())) next(children, 0);
+                };
+                organizeList();
+            }
