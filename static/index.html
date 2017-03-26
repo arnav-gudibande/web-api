@@ -64,10 +64,21 @@
                         }
                     });
                     app.socket.on('eventInfo', function (e) {
-                        console.log('eventInfo');
-                        console.log(e);
                         app.cookie('eventID', e.id, 'Thu, 01 Jan 3005 00:00:01 GMT');
                         app.block.on('view', { view: 'main', event: e });
+                    });
+                    app.socket.on('songBoosted', function (e) {
+                        var songblock = app.block.child('main/content').child(e.data.id);
+                        if (Block.is.set(songblock) && songblock.block)
+                            songblock.data({ num: parseInt(songblock.key('num')) + 1 });
+                    });
+                    app.socket.on('popped', function (e) {
+                        var songblock = app.block.child('main/content').child(e.id);
+                        if (Block.is.set(songblock) && songblock.block)
+                            app.block.child('main/content').remove(e.id);
+                    });
+                    app.socket.on('newSong', function (e) {
+                        app.block.child('main/content').on('load', { event: { songs: [ e ] } });
                     });
                     setTimeout(function () {
                         var cookieID = app.cookie('eventID');
@@ -80,6 +91,47 @@
                 },
                 boostSong: function (songID) {
                     app.socket.emit('boostSong', songID);
+                },
+                requestSong: function (songData) {
+                    app.socket.emit('addSong', {
+                        id: songData.id,
+                        name: songData.name,
+                        artist: songData.artist,
+                        urlAlbumArt: songData.artwork
+                    });
+                },
+                search: function (query) {
+                    $.ajax({
+                        url: 'https://api.spotify.com/v1/search',
+                        method: 'GET',
+                        data: {
+                            q: query,
+                            type: 'track',
+                            limit: 20
+                        },
+                        success: function (data) {
+                            if (data.tracks && Block.is.obj(data.tracks) && data.tracks.items && Block.is.arr(data.tracks.items)) {
+                                var items = data.tracks.items;
+                                var pruned = [];
+                                for (var i in items) {
+                                    var artist = '';
+                                    for (var a = 0; a < items[i].artists.length; a++) {
+                                        artist += items[i].artists[a].name;
+                                        if (a != items[i].artists.length - 1)
+                                            artist += ', ';
+                                    }
+                                    var song = {
+                                        id: items[i].id,
+                                        name: items[i].name,
+                                        artwork: items[i].album.images[0].url,
+                                        artist: artist
+                                    };
+                                    pruned.push(song);
+                                }
+                                app.block.child('main/search/results').on('load', { songs: pruned });
+                            }
+                        }
+                    });
                 }
             };
             window.addEventListener('load', function () {

@@ -183,6 +183,7 @@ app
                             border none
                             font-size 20px
                             padding 5px 15px
+                            outline none
                     div join
                         css
                             background-color #59b265
@@ -274,6 +275,10 @@ app
                     width 70px
                     css
                         margin 0 auto
+                :click
+                    {
+                        block.parent(1).child('search').on('show');
+                    }
             block logo
                 css
                     position absolute
@@ -316,22 +321,34 @@ app
                     var block = Block('div');
                     block
                         .key('num', 0)
+                        .key('locked', false)
                         .css({
                             height: '130px',
                             padding: '10px 0'
                         })
                         .add(Block('div', 'content')
                             .css({
-                                backgroundColor: '#1d1d1d',
+                                backgroundColor: '#191919',
                                 width: '80%',
                                 height: '100%',
                                 margin: '0 auto',
                                 borderRadius: '5px',
                                 position: 'relative',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                transition: 'backround-color 0.3s ease'
+                            })
+                            .on('mouseover', function (e, b) {
+                                if (!block.key('locked')) b.css('background-color', '#1b1b1b');
+                            })
+                            .on('mouseout', function (e, b) {
+                                if (!block.key('locked')) b.css('background-color', '#191919');
                             })
                             .on('click', function (e, b) {
-                                app.boostSong(b.parent().mark());
+                                if (block.key('locked') == false) {
+                                    app.boostSong(b.parent().mark());
+                                    b.css('transition', 'background-color 0.3s ease').css('background-color', 'rgba(45, 174, 98, 0.8)').key('locked', true);
+                                    block.key('locked', true);
+                                }
                             })
                             .add(Block('block', 'num')
                                 .add(Block('text', 1)
@@ -417,6 +434,7 @@ app
                         block.key('num', num).child('content/num/text').html('').data(num);
                     });
                     data('name', function (name) {
+                        if (name.length > 15) name = name.substring(0, 12) + '...';
                         block.child('content/name/text').html('').data(name);
                     });
                     data('artist', function (artist) {
@@ -480,9 +498,200 @@ app
                         }
                         if (i < children.length - 2)
                             setTimeout(function () { next(children, i + 1); }, t);
-                        else setTimeout(function () { organizeList(); }, t);
+                        else setTimeout(organizeList, t);
                     };
-                    if (!$.isEmptyObject(block.children())) next(children, 0);
+                    if (Object.keys(block.children()).length > 1) next(children, 0);
+                    else setTimeout(organizeList, 500);
                 };
                 organizeList();
             }
+        div search
+            css
+                height 100%
+                width 100%
+                position absolute
+                top 100%
+                left 0
+                right 0
+                transition top 0.3s ease-out
+                background-color #222
+                z-index 10
+            :show
+                css
+                    top 0
+                {
+                    block.child('results').empty().sibling('bar').child('input').node().value = '';
+                }
+            :hide
+                css
+                    top 100%
+            block bar
+                css
+                    position absolute
+                    top 0
+                    left 0
+                    right 0
+                    height 100px
+                    background-color #222
+                input input
+                    type text
+                    css
+                        width 80%
+                        height 40px
+                        padding 10px 30px
+                        border-radius 8px
+                        outline none
+                        font-size 28px
+                        background-color #1a1a1a
+                        border none
+                        color #eee
+                div image
+                    image image
+                        src img/search.png
+                        height 45px
+                        width 45px
+                    css
+                        position absolute
+                        top 28px
+                        right 40px
+                        opacity 0.6
+                        cursor pointer
+                        transition opacity 0.14s
+                    :mouseover
+                        css
+                            opacity 0.8
+                    :mouseout
+                        css
+                            opacity 0.6
+                    :click
+                        {
+                            var query = block.sibling('input').node().value;
+                            if (query != null && query.trim() != '')
+                                app.search(query);
+                            else block.parent(1).on('hide');
+                        }
+            div results
+                css
+                    width 100%
+                    padding-top 110px
+                    overflow-y scroll
+                    -webkit-overflow-scrolling touch
+                @query window width != 0
+                    {
+                        block.css('height', (window.innerHeight - 110) + 'px');
+                    }
+                !result
+                    init
+                        {
+                            var block = Block('div');
+                            block
+                                .css({
+                                    width: '100%',
+                                    height: '130px',
+                                    backgroundColor: '#1d1d1d',
+                                    margin: '0 auto',
+                                    borderBottom: '1px solid #333',
+                                    position: 'relative',
+                                    cursor: 'pointer'
+                                })
+                                .on('mouseover', function () {
+                                    block.css('background-color', '#202020')
+                                })
+                                .on('mouseout', function () {
+                                    block.css('background-color', '#1d1d1d')
+                                })
+                                .on('click', function () {
+                                    console.log(block.key('data'));
+                                    app.requestSong(block.key('data'));
+                                    block.parent(1).on('hide');
+                                })
+                                .add(Block('div', 'name')
+                                    .add(Block('text', 1)
+                                        .data({
+                                            val: 'Song Name',
+                                            css: {
+                                                fontSize: '30px',
+                                                fontWeight: 'bold',
+                                                color: '#ccc'
+                                            }
+                                        })
+                                    )
+                                    .css({
+                                        marginLeft: '170px',
+                                        height: '32%',
+                                        textAlign: 'left',
+                                        paddingTop: '30px'
+                                    })
+                                    .query('window width != 0', function () {
+                                        block.css('width', (block.parent().$().width() - 140 - 120 - 20) + 'px');
+                                    })
+                                )
+                                .add(Block('div', 'artist')
+                                    .add(Block('text', 1)
+                                        .data({
+                                            val: 'Artist Name',
+                                            css: {
+                                                fontSize: '20px',
+                                                fontWeight: 'normal',
+                                                color: '#aaa',
+                                                textAlign: 'left',
+                                                paddingTop: '20px'
+                                            }
+                                        })
+                                    )
+                                    .css({
+                                        marginLeft: '170px',
+                                        height: '40%'
+                                    })
+                                    .query('window width != 0', function () {
+                                        block.css('width', (block.parent().$().width() - 140 - 120 - 20) + 'px');
+                                    })
+                                )
+                                .add(Block('block', 'artwork')
+                                    .add(Block('image', 1)
+                                        .data({
+                                            src: 'img/artwork.png',
+                                            height: '90px',
+                                            width: '90px'
+                                        })
+                                    )
+                                    .css({
+                                        width: '110px',
+                                        position: 'absolute',
+                                        left: '50px',
+                                        top: '0'
+                                    })
+                                )
+                            ;
+                            return block;
+                        }
+                    load
+                        {
+                            block.key('data', data('this'));
+                            data('name', function (name) {
+                                if (name.length > 25) name = name.substring(0, 25) + '...';
+                                block.child('name/text').html('').data(name);
+                            });
+                            data('artist', function (artist) {
+                                block.child('artist/text').html('').data(artist);
+                            });
+                            data('artwork', function (artwork) {
+                                block.child('artwork/image').data({
+                                    src: artwork,
+                                    height: '90px',
+                                    width: '90px'
+                                });
+                            });
+                            block.id(block.mark());
+                        }
+                :load
+                    {
+                        block.empty();
+                        if (data.songs && Block.is.arr(data.songs)) {
+                            for (var s = 0; s < data.songs.length; s++) {
+                                block.add(Block('result', data.songs[s].id)
+                                    .data(data.songs[s])
+                                );
+                            }
+                        }
+                    }
