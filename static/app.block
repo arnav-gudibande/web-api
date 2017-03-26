@@ -74,6 +74,7 @@ app
         opacity 0
         transition opacity 1s ease
         position relative
+        overflow hidden
     div login
         css
             background-color #222
@@ -315,6 +316,69 @@ app
                 height 140px
                 background-color #171717
                 z-index 5
+            div name
+                text text
+                    val Song Name
+                    css
+                        font-size 30px
+                        font-weight bold
+                        color #ccc
+                css
+                    margin-left 210px
+                    height 32%
+                    text-align left
+                    padding-top 30px
+            div artist
+                text text
+                    val Artist Name
+                    css
+                        font-size 20px
+                        font-weight normal
+                        color #aaa
+                        text-align left
+                        padding-top 20px
+                css
+                    margin-left 210px
+                    height 40%
+            block artwork
+                image image
+                    src img/artwork.png
+                    height 100px
+                    width 100px
+                css
+                    width 110px
+                    position absolute
+                    left 70px
+                    top 0
+            div barBG
+                css
+                    position fixed
+                    bottom 140px
+                    left 0
+                    right 0
+                    width 100%
+                    height 2px
+                    background-color #444
+                    z-index 15
+            div barFG
+                css
+                    position fixed
+                    bottom 140px
+                    left 0
+                    width 50%
+                    height 2px
+                    background-color #888
+                    z-index 16
+            :load
+                {
+                    block.child('name/text').html('').data(data.name);
+                    block.child('artist/text').html('').data(data.artist);
+                    block.child('artwork/image').data({
+                        src: data.src,
+                        height: '100px',
+                        width: '100px'
+                    });
+                }
         !song
             init
                 {
@@ -533,6 +597,7 @@ app
                     right 0
                     height 100px
                     background-color #222
+                    z-index 10
                 input input
                     type text
                     css

@@ -80,6 +80,12 @@
                     app.socket.on('newSong', function (e) {
                         app.block.child('main/content').on('load', { event: { songs: [ e ] } });
                     });
+                    app.socket.on('eventSongs', function (e) {
+                        app.socket.emit('getCurrentSong');
+                    });
+                    app.socket.on('currentSong', function (e) {
+                        
+                    });
                     setTimeout(function () {
                         var cookieID = app.cookie('eventID');
                         if (cookieID != null) {
@@ -121,7 +127,7 @@
                                             artist += ', ';
                                     }
                                     var song = {
-                                        id: items[i].id,
+                                        id: 'spotify:track:' + items[i].id,
                                         name: items[i].name,
                                         artwork: items[i].album.images[0].url,
                                         artist: artist
