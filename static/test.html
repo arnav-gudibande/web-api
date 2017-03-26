@@ -49,13 +49,41 @@
                     console.log('connected');
                     console.log('socket id: ' + socket.id);
                 });
-                var eventnames = ['DiscoError', 'eventInfo', 'currentSong', 'eventSongs', 'newSong', 'songBoosted', 'popped'];
-                for (var ev in eventnames) {
-                    socket.on(ev, function (e) {
-                        console.log(ev);
-                        console.log(e);
-                    });
-                }
+                // var eventnames = ['DiscoError', 'eventInfo', 'currentSong', 'eventSongs', 'newSong', 'songBoosted', 'popped'];
+                // for (var ev in eventnames) {
+                //     socket.on(ev, function (e) {
+                //         console.log(ev);
+                //         console.log(e);
+                //     });
+                // }
+                socket.on('DiscoError', function (e) {
+                    console.log('DiscoError');
+                    console.log(e);
+                });
+                socket.on('eventInfo', function (e) {
+                    console.log('eventInfo');
+                    console.log(e);
+                });
+                socket.on('currentSong', function (e) {
+                    console.log('currentSong');
+                    console.log(e);
+                });
+                socket.on('eventSongs', function (e) {
+                    console.log('eventSongs');
+                    console.log(e);
+                });
+                socket.on('newSong', function (e) {
+                    console.log('newSong');
+                    console.log(e);
+                });
+                socket.on('songBoosted', function (e) {
+                    console.log('songBoosted');
+                    console.log(e);
+                });
+                socket.on('popped', function (e) {
+                    console.log('popped');
+                    console.log(e);
+                });
             });
         </script>
     </head>
