@@ -66,6 +66,7 @@
                     app.socket.on('eventInfo', function (e) {
                         app.cookie('eventID', e.id, 'Thu, 01 Jan 3005 00:00:01 GMT');
                         app.block.on('view', { view: 'main', event: e });
+                        app.socket.emit('getCurrentSong');
                     });
                     app.socket.on('songBoosted', function (e) {
                         var songblock = app.block.child('main/content').child(e.data.id);
@@ -79,6 +80,7 @@
                     });
                     app.socket.on('newSong', function (e) {
                         app.block.child('main/content').on('load', { event: { songs: [ e ] } });
+                        app.socket.emit('getCurrentSong');
                     });
                     app.socket.on('eventSongs', function (e) {
                         app.socket.emit('getCurrentSong');
