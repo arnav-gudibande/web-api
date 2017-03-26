@@ -54,7 +54,7 @@
                 connect: function () {
                     app.socket.on('connect', function (socket) {
                         console.log('connected');
-                        console.log('socket id: ' + socket.id);
+                        // console.log('socket id: ' + socket.id);
                     });
                     app.socket.on('DiscoError', function (e) {
                         console.log('DiscoError');
