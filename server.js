@@ -121,5 +121,6 @@ app.post("/api/events/create", function (req, res) {
     res.json(event.json());
 });
 
+
 app.post("/spotify/swap", SpotifyManager.swap);
 app.post("/spotify/refresh", SpotifyManager.refresh);
