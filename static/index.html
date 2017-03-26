@@ -84,7 +84,7 @@
                         app.socket.emit('getCurrentSong');
                     });
                     app.socket.on('currentSong', function (e) {
-                        app.block.child('main/menuBottom').on('load', e);
+                        app.block.child('main/menuBottom').on('load', e.song);
                     });
                     setTimeout(function () {
                         var cookieID = app.cookie('eventID');
