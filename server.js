@@ -9,6 +9,7 @@ const SpotifyManager = require("./SpotifyManager.js");
 
 const bodyParser = require("body-parser");
 const _ = require("underscore");
+const http = require('http');
 const express = require('express');
 
 const app = express();
@@ -98,6 +99,24 @@ io.on('connection', (socket) => {
 
         io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit('popped', events[socket.rooms[Object.keys(socket.rooms)[0]]].pop());
         io.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit("eventSongs", events[socket.rooms[Object.keys(socket.rooms)[0]]].getSongs());
+    });
+
+    socket.on('loadPlaylist', function (userid, playlistid) {
+        http.get({
+            host: 'https://api.spotify.com',
+            path: '/v1/user/' + userid + '/playlist/' + playlistid + '/tracks'
+        }, function (response) {
+            // Continuously update stream with data
+            var body = '';
+            response.on('data', function(d) {
+                body += d;
+            });
+            response.on('end', function() {
+                var parsed = JSON.parse(body);
+                console.log(parsed);
+            });
+        });
+        console.log();
     });
 
     socket.on('disconnect', () => {
