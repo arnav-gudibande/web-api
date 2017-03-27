@@ -53,3 +53,5 @@ Response: { “name”: {{song_name}}, “artist”: {{song_artist}}, “id”, 
 #### Gets the event's current song
 
 Response: { “name”: {{song_name}}, “artist”: {{song_artist}}, “id”, {{spotify_id}}, “urlAlbumArt”: {{url_album_art}}, “boostRating”: {{boost_rating}}}
+
+  
